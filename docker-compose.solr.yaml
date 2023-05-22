@@ -1,0 +1,20 @@
+#ddev-generated
+version: '3.6'
+services:
+  solr:
+    container_name: ddev-${DDEV_SITENAME}-solr
+    image: ghcr.io/ibexa/core/solr:latest
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+    environment:
+      # This defines the host name the service should be accessible from. This
+      # will be sitename.ddev.site.
+      - VIRTUAL_HOST=$DDEV_HOSTNAME
+      # HTTP_EXPOSE exposes http traffic from the container port 8983
+      # to the host port 8983 vid ddev-router reverse proxy.
+      - HTTP_EXPOSE=8983:8983
+    healthcheck:
+      timeout: 20s
+    volumes:
+    - ".:/mnt/ddev_config"

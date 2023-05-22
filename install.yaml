@@ -1,4 +1,4 @@
-name: addon-template
+name: solr
 
 # pre_install_actions - list of actions to run before installing the addon.
 # Examples would be removing an extraneous docker volume,
@@ -56,7 +56,8 @@ pre_install_actions:
 # if it hasn't been modified by the user.
 # DDEV environment variables can be interpolated into these filenames
 project_files:
-- docker-compose.addon-template.yaml
+- docker-compose.solr.yaml
+- config.solr.yaml
 # - extra_files/
 # - somefile.sh
 

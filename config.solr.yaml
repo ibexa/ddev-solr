@@ -1,0 +1,9 @@
+#ddev-generated
+web_environment:
+- SEARCH_ENGINE=solr
+- SOLR_CORE=collection1
+- SOLR_DSN=http://solr:8983/solr
+
+hooks:
+  post-start:
+  - exec: php bin/console ibexa:reindex
