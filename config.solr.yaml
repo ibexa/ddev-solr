@@ -6,4 +6,10 @@ web_environment:
 
 hooks:
   post-start:
-  - exec: php bin/console ibexa:reindex
+    - exec: >
+        until $(curl --output /dev/null --silent --head --fail http://solr:8983/api/); do
+          echo "Waiting for Solr to start...";
+          sleep 10;
+        done;
+        echo "Solr has started. Proceeding with reindex.";
+        php bin/console ibexa:reindex

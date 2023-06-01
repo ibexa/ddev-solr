@@ -3,7 +3,7 @@ version: '3.6'
 services:
   solr:
     container_name: ddev-${DDEV_SITENAME}-solr
-    image: ghcr.io/ibexa/core/solr:latest
+    image: bitnami/solr:8
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
@@ -14,7 +14,20 @@ services:
       # HTTP_EXPOSE exposes http traffic from the container port 8983
       # to the host port 8983 vid ddev-router reverse proxy.
       - HTTP_EXPOSE=8983:8983
-    healthcheck:
-      timeout: 20s
+      # Bitnami Image specifics
+      - SOLR_CORES=collection1
+      - SOLR_CORE_CONF_DIR=/mnt/ddev_config/solrconfigs
     volumes:
-    - ".:/mnt/ddev_config"
+      # solr core *data* is stored on the 'solr_data' docker volume
+      # This mount is optional; without it your search index disappears
+      # each time the ddev project is stopped and started.
+      - solr_data:/bitnami
+
+      - ".:/mnt/ddev_config"
+    healthcheck:
+      timeout: 30s
+
+volumes:
+  # solr_data is a persistent Docker volume for solr data
+  solr_data:
+    name: "ddev-${DDEV_SITENAME}_solr"
