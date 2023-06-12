@@ -1,51 +1,42 @@
-[![tests](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
+# DDEV Solr Addon
 
-# ddev-addon-template <!-- omit in toc -->
+This repository, `ibexa/ddev-solr` is a [DDEV add-on](https://ddev.readthedocs.io/en/latest/users/extend/additional-services/) that provides Solr service for Ibexa DXP. It uses the [Bitnami Solr image](https://bitnami.com/stack/solr/containers) and provides default configurations.
 
-* [What is ddev-addon-template?](#what-is-ddev-addon-template)
-* [Components of the repository](#components-of-the-repository)
-* [Getting started](#getting-started)
+## Introduction
 
-## What is ddev-addon-template?
+This repository is designed to help developers set up Solr for use with Ibexa DXP using DDEV. It is not a standalone project but is meant to be used in conjunction with your existing Ibexa DXP project and DDEV setup.
 
-This repository is a template for providing [DDEV](https://ddev.readthedocs.io) add-ons and services.
+## Documentation
 
-In DDEV addons can be installed from the command line using the `ddev get` command, for example, `ddev get ddev/ddev-addon-template` or `ddev get ddev/ddev-drupal9-solr`.
+Before you start, it's important to familiarize yourself with the relevant documentation:
 
-A repository like this one is the way to get started. You can create a new repo from this one by clicking the template button in the top right corner of the page.
+- [Ibexa DXP Documentation](https://doc.ibexa.co/en/latest/)
+- [Solr Search Engine Documentation for Ibexa DXP](https://doc.ibexa.co/en/latest/search/solr_search_engine/)
+- [DDEV Documentation](https://ddev.readthedocs.io/en/stable/)
 
-![template button](images/template-button.png)
+## Getting Started
 
-## Components of the repository
+To use this configuration, you'll need to have DDEV installed and an existing Ibexa DXP project set up. Once you have those ready, you can use the DDEV `get` command to fetch this configuration and set up Solr for your project.
 
-* The fundamental contents of the add-on service or other component. For example, in this template there is a [docker-compose.addon-template.yaml](docker-compose.addon-template.yaml) file.
-* An [install.yaml](install.yaml) file that describes how to install the service or other component.
-* A test suite in [test.bats](tests/test.bats) that makes sure the service continues to work as expected.
-* [Github actions setup](.github/workflows/tests.yml) so that the tests run automatically when you push to the repository.
+```bash
+ddev get ibexa/ddev-solr
+```
 
-## Getting started
+## Configuration
 
-1. Choose a good descriptive name for your add-on. It should probably start with "ddev-" and include the basic service or functionality. If it's particular to a specific CMS, perhaps `ddev-<CMS>-servicename`.
-2. Create the new template repository by using the template button.
-3. Globally replace "addon-template" with the name of your add-on.
-4. Add the files that need to be added to a ddev project to the repository. For example, you might remove `docker-compose.addon-template.yaml` with the `docker-compose.*.yaml` for your recipe.
-5. Update the install.yaml to give the necessary instructions for installing the add-on.
+This add-on is configuring itself out-of-the-box, setting itself as the search engine for Ibexa DXP and configuring the connection.
 
-   * The fundamental line is the `project_files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
-   * You can optionally add files to the `global_files` directive as well, which will cause files to be placed in the global `.ddev` directory, `~/.ddev`.
-   * Finally, `pre_install_commands` and `post_install_commands` are supported. These can use the host-side environment variables documented [in ddev docs](https://ddev.readthedocs.io/en/stable/users/extend/custom-commands/#environment-variables-provided).
+### Internals
 
-6. Update `tests/test.bats` to provide a reasonable test for the repository. You can run it manually with `bats tests` and it will be run on push and nightly as well. Please make sure to attend to test failures when they happen. Others will be depending on you. `bats` is a simple testing framework that just uses `bash`. You can install it with `brew install bats-core` or [see other techniques](https://bats-core.readthedocs.io/en/stable/installation.html). See [bats tutorial](https://bats-core.readthedocs.io/en/stable/).
-7. When everything is working, including the tests, you can push the repository to GitHub.
-8. Create a release on GitHub.
-9. Test manually with `ddev get <owner/repo>`.
-10. You can test PRs with `ddev get https://github.com/<user>/<repo>/tarball/<branch>`
-11. Update the README.md to describe the add-on, how to use it, and how to contribute. If there are any manual actions that have to be taken, please explain them. If it requires special configuration of the using project, please explain how to do those. Examples in [ddev/ddev-drupal9-solr](https://github.com/ddev/ddev-drupal9-solr), [ddev/ddev-memcached](github.com/ddev/ddev-memcached), and [ddev/ddev-beanstalkd](https://github.com/ddev/ddev-beanstalkd).
-12. Add a good short description to your repo, and add the label "ddev-get". It will immediately be added to the list provided by `ddev get --list --all`.
-13. When it has matured you will hopefully want to have it become an "official" maintained add-on. Open an issue in the [ddev queue](https://github.com/ddev/ddev/issues) for that.
+The `config.solr.yaml` file contains the following configurations:
 
-Note that more advanced techniques are discussed in [DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#additional-service-configurations-and-add-ons-for-ddev).
+- `web_environment`: Defines the environment variables for the web service container.
+- `hooks`: Defines the actions to be performed after the service starts. In this case, it waits for Solr to start and then **proceeds with reindexing**.
 
-**Contributed and maintained by [@CONTRIBUTOR](https://github.com/CONTRIBUTOR) based on the original [ddev-contrib recipe](https://github.com/ddev/ddev-contrib/tree/master/docker-compose-services/RECIPE) by [@CONTRIBUTOR](https://github.com/CONTRIBUTOR)**
+The `docker-compose.solr.yaml` file defines the Solr service, including the container name, image, labels, environment variables, volumes, and healthcheck. It also defines a persistent Docker volume for Solr data.
 
-**Originally Contributed by [somebody](https://github.com/somebody) in <https://github.com/ddev/ddev-contrib/>
+Those files will be copied over to `.ddev` folder of the project, when the addon is installed via `ddev get` command.
+
+## Contributing
+
+Contributions to this repository are welcome. If you encounter any issues or have suggestions for improvements, please open an issue in the repository.
