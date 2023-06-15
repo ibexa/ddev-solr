@@ -34,8 +34,8 @@ teardown() {
 @test "install from release" {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  echo "# ddev get ibexa-yuna/ddev-solr with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-  ddev get ibexa-yuna/ddev-solr
+  echo "# ddev get ibexa/ddev-solr with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  ddev get ibexa/ddev-solr
   ddev restart >/dev/null
   health_checks
 }
